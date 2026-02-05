@@ -1,0 +1,14 @@
+{
+  "irq/53-rmi4_smbus": 1,
+  "Xorg": 1,
+  "wireplumber": 1,
+  "cinnamon": 1,
+  "mintUpdate": 1,
+  "xed": 1,
+  "firefox-bin": 1,
+  "WebExtensions": 1,
+  "Privileged Cont": 1,
+  "Isolated Web Co": 1,
+  "brave": 4,
+  "python": 1
+}
