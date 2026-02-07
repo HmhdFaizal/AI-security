@@ -4,6 +4,8 @@ from collector.process_monitor import get_process_data
 from collector.network_monitor import get_network_activity
 from ai_engine.baseline import load_baseline
 from ai_engine.anomaly_model import train_model
+from ai_engine.threat_score import calculate_risk
+from core.report import generate_report
 import sys
 import os
 
@@ -33,20 +35,71 @@ model = train_model(baseline)
 
 proc_state = load_state("data/anomaly_state.json")
 net_state = load_state("data/network_state.json")
-
 print("Process scan")
+
+process_hits = {}
+
 for p in get_process_data():
     if model.predict([[p['cpu'], p['mem']]])[0] == -1:
-        proc_state[p['name']] = proc_state.get(p['name'], 0) + 1
-        if proc_state[p['name']] >= 3:
-            print(f"[PROCESS] {p['name']}")
+        name = p['name']
+        process_hits[name] = process_hits.get(name, 0) + 1
+        proc_state[name] = proc_state.get(name, 0) + 1
+print("\nNetwork scan")
 
-print("\n Network scan")
+network_hits = {}
+
 for n in get_network_activity():
     key = f"{n['process']}:{n['ip']}"
+    network_hits[n['process']] = network_hits.get(n['process'], 0) + 1
     net_state[key] = net_state.get(key, 0) + 1
-    if net_state[key] >= 5:
-        print(f"[NETWORK] {key}")
+
+
+print("\nThreat Risk Summary\n")
+
+for process in set(list(process_hits.keys()) + list(network_hits.keys())):
+    risk = calculate_risk(
+        process_hits.get(process, 0),
+        network_hits.get(process, 0)
+    )
+
+    if risk >= 70:
+        level = "HIGH"
+    elif risk >= 40:
+        level = "MEDIUM"
+    else:
+        level = "LOW"
+
+    print(f"{process:25} | Risk: {risk:3} | {level}")
+
+results = {
+    "processes": len(process_hits),
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "details": []
+}
+
+for process in set(list(process_hits.keys()) + list(network_hits.keys())):
+    risk = calculate_risk(
+        process_hits.get(process, 0),
+        network_hits.get(process, 0)
+    )
+
+    if risk >= 70:
+        results["high"] += 1
+    elif risk >= 40:
+        results["medium"] += 1
+    else:
+        results["low"] += 1
+
+    results["details"].append({
+        "process": process,
+        "risk": risk
+    })
+
+report_file = generate_report(results)
+print(f"\nReport saved to: {report_file}")
+
 
 save_state("data/anomaly_state.json", proc_state)
 save_state("data/network_state.json", net_state)
