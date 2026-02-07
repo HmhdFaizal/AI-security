@@ -1,0 +1,10 @@
+{
+  "Xorg": 1,
+  "cinnamon": 1,
+  "firefox-bin": 1,
+  "WebExtensions": 1,
+  "Privileged Cont": 1,
+  "Isolated Web Co": 2,
+  "brave": 4,
+  "python": 1
+}
