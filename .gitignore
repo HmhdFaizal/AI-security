@@ -1,10 +1,24 @@
 # Virtual environment
 venv/
+.env/
 
 # Python cache
 __pycache__/
 *.pyc
 
-# Data files
+# Data files (generated at runtime)
 data/*.json
 data/*.txt
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
+
+# Installer outputs
+installer/
+*.iss
+
+# OS-specific junk
+.DS_Store
+Thumbs.db

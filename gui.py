@@ -1,85 +1,65 @@
 import tkinter as tk
-import sys
-import subprocess
 import threading
+from engine import run_detect, run_learn
 
-def run_learn():
+
+def append(text, tag=None):
+    output.after(0, lambda: (output.insert(tk.END, text, tag), output.see(tk.END)))
+
+
+def set_status(text, color):
+    status.after(0, lambda: status.config(text=text, fg=color))
+
+
+def start_scan():
     output.delete(1.0, tk.END)
-    output.insert(tk.END, "Running learning mode...\n\n")
+    set_status("Scanning system...", "orange")
 
-    def task():
-        process = subprocess.Popen(
-            [sys.executable, "main.py", "learn"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
+    threading.Thread(
+        target=lambda: (
+            run_detect(append),
+            set_status("Idle", "green")
+        ),
+        daemon=True
+    ).start()
 
-        for line in process.stdout:
-            output.insert(tk.END, line)
-            output.see(tk.END)
 
-        output.insert(tk.END, "\nLearning completed\n")
-
-    threading.Thread(target=task).start()
-
-def run_scan():
+def start_learn():
     output.delete(1.0, tk.END)
-    output.insert(tk.END, "Running security scan...\n\n")
+    set_status("Learning mode...", "blue")
 
-    def task():
-        process = subprocess.Popen(
-            [sys.executable, "main.py", "detect"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
+    threading.Thread(
+        target=lambda: (
+            run_learn(append),
+            set_status("Idle", "green")
+        ),
+        daemon=True
+    ).start()
 
-        # Read standard output
-        for line in process.stdout:
-            if "HIGH" in line:
-                output.insert(tk.END, line, "HIGH")
-            elif "MEDIUM" in line:
-                output.insert(tk.END, line, "MEDIUM")
-            elif "LOW" in line:
-                output.insert(tk.END, line, "LOW")
-            else:
-                output.insert(tk.END, line)
 
-            output.see(tk.END)
-
-        # Read errors (if any)
-        for err in process.stderr:
-            output.insert(tk.END, err)
-            output.see(tk.END)
-
-        output.insert(tk.END, "\nScan finished\n")
-
-    threading.Thread(target=task, daemon=True).start()
-
-# ---------------- GUI ---------------- #
+# ---------- GUI ---------- #
 
 root = tk.Tk()
 root.title("AI Security Monitor")
-root.geometry("750x520")
+root.geometry("780x560")
+root.resizable(False, False)
 
-title = tk.Label(root, text="AI Security Monitor", font=("Arial", 16, "bold"))
-title.pack(pady=10)
+tk.Label(root, text="AI Security Monitor", font=("Arial", 18, "bold")).pack(pady=10)
 
-scan_btn = tk.Button(root, text="Run Security Scan", command=run_scan)
-scan_btn.pack(pady=10)
+btns = tk.Frame(root)
+btns.pack()
 
-learn_btn = tk.Button(root, text="Run Learning Mode", command=run_learn)
-learn_btn.pack(pady=5)
+tk.Button(btns, text="Run Security Scan", width=18, command=start_scan).grid(row=0, column=0, padx=10)
+tk.Button(btns, text="Run Learning Mode", width=18, command=start_learn).grid(row=0, column=1, padx=10)
 
+status = tk.Label(root, text="Idle", font=("Arial", 10, "bold"))
+status.pack(pady=5)
 
-output = tk.Text(root, wrap="word")
+output = tk.Text(root, wrap="word", font=("Consolas", 10))
 output.pack(expand=True, fill="both", padx=10, pady=10)
 
-# Risk color tags
 output.tag_config("LOW", foreground="green")
 output.tag_config("MEDIUM", foreground="orange")
 output.tag_config("HIGH", foreground="red")
 
 root.mainloop()
-
