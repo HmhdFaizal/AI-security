@@ -1,3 +1,4 @@
+from core.pdf_report import generate_pdf
 from core.os_detect import get_os
 from core.state import load_state, save_state
 from collector.process_monitor import get_process_data
@@ -99,6 +100,8 @@ for process in set(list(process_hits.keys()) + list(network_hits.keys())):
 
 report_file = generate_report(results)
 print(f"\nReport saved to: {report_file}")
+pdf = generate_pdf(results["details"])
+print(f"PDF report saved to: {pdf}")
 
 
 save_state("data/anomaly_state.json", proc_state)

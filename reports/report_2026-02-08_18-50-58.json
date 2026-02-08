@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-02-08_18-50-58",
+  "summary": {
+    "processes_scanned": 7,
+    "high_risk": 1,
+    "medium_risk": 2,
+    "low_risk": 5
+  },
+  "details": [
+    {
+      "process": "python",
+      "risk": 15
+    },
+    {
+      "process": "cinnamon",
+      "risk": 15
+    },
+    {
+      "process": "mintUpdate",
+      "risk": 20
+    },
+    {
+      "process": "Isolated Web Co",
+      "risk": 45
+    },
+    {
+      "process": "firefox-bin",
+      "risk": 55
+    },
+    {
+      "process": "brave",
+      "risk": 80
+    },
+    {
+      "process": "Xorg",
+      "risk": 15
+    },
+    {
+      "process": "Privileged Cont",
+      "risk": 15
+    }
+  ]
+}

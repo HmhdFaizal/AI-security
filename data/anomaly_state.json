@@ -1,11 +1,11 @@
 {
-  "Xorg": 5,
-  "cinnamon": 5,
-  "firefox-bin": 5,
+  "Xorg": 6,
+  "cinnamon": 6,
+  "firefox-bin": 6,
   "WebExtensions": 2,
-  "Privileged Cont": 5,
-  "Isolated Web Co": 16,
-  "brave": 20,
-  "python": 2,
+  "Privileged Cont": 6,
+  "Isolated Web Co": 19,
+  "brave": 24,
+  "python": 3,
   "python3": 3
 }

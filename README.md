@@ -36,3 +36,19 @@ This project is designed for **learning, experimentation, and portfolio demonstr
 ---
 
 ## Architecture Overview
+
+ai_security/
+├── main.py
+├── collector/
+│ ├── process_monitor.py
+│ └── network_monitor.py
+├── ai_engine/
+│ ├── baseline.py
+│ └── anomaly_model.py
+├── core/
+│ ├── os_detect.py
+│ └── state.py
+├── data/
+│ ├── behavior_log_<os>.txt
+│ ├── anomaly_state.json
+│ └── network_state.json
